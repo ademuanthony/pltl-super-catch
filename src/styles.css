@@ -16,6 +16,7 @@
   border-radius: 10px;
 }
 
+
 /* Form styling */
 #withdrawal-form {
   display: flex;
@@ -71,13 +72,13 @@ button[type="button"]:hover {
 }
 
 /* Game mode selection modal */
-#game-mode-modal .button-container {
+#game-difficulty-modal .button-container {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
 }
 
-#game-mode-modal button {
+#game-difficulty-modal button {
   flex: 1;
   padding: 10px;
   margin: 0 5px;
@@ -88,6 +89,6 @@ button[type="button"]:hover {
   cursor: pointer;
 }
 
-#game-mode-modal button:hover {
+#game-difficulty-modal button:hover {
   background-color: #45a049;
 }

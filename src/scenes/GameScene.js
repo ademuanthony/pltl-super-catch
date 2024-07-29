@@ -1,90 +1,30 @@
-var score = 0;
-var lifeline = 10;
-var walletBalance = 1000; // Example wallet balance
-var ethAddress = '0xc87a86671E0590C2CC7e729FDb96d61550C122F5'; // Provided ETH address
-var scoreText;
-var lifelineText;
-var walletButton;
-var superman;
-var basketHitbox;
-var cursors;
-var gameOver = false;
-var modal;
-var gameTime = 0; // Track the game time to adjust difficulty
-var gameMode = 'easy'; // Default game mode
-var baseSpeed = 200; // Base speed for falling objects
-var backgroundMusic;
+import Phaser from 'phaser';
 
-class ModeSelectionScene extends Phaser.Scene {
-  constructor() {
-    super({ key: 'ModeSelectionScene' });
-  }
+let score = 0;
+let lifeline = 10;
+let walletBalance = 1000;
+let ethAddress = "0xc87a86671E0590C2CC7e729FDb96d61550C122F5";
+let scoreText;
+let lifelineText;
+let walletButton;
+let superman;
+let basketHitbox;
+let cursors;
+let gameOver = false;
+let modal;
+let gameTime = 0;
+let gameDifficulty = 'easy';
+let baseSpeed = 200;
+let backgroundMusic;
 
-  preload() {
-    this.load.image('wallet', 'assets/wallet.png'); // Wallet button image
-    this.load.image('atmosphere', 'assets/atmosphere.png');
-  }
-
-  create() {
-    this.add.image(211, 320, 'atmosphere');
-
-    // Create a div element for the game mode selection modal and show it initially
-    var gameModeModalHtml = `
-      <div id="game-difficulty-modal" class="modal">
-        <h2>Select Game Mode</h2>
-        <div class="button-container">
-          <button id="easy-difficulty-button">Easy</button>
-          <button id="medium-difficulty-button">Medium</button>
-          <button id="hard-difficulty-button">Hard</button>
-        </div>
-      </div>
-    `;
-    var gameModeModalContainer = document.createElement('div');
-    gameModeModalContainer.innerHTML = gameModeModalHtml;
-    document.body.appendChild(gameModeModalContainer);
-    document.getElementById('game-difficulty-modal').style.display = 'block'; // Show game mode selection modal
-
-    // Add event listeners for game mode selection buttons
-    document
-      .getElementById('easy-difficulty-button')
-      .addEventListener('click', () => {
-        this.selectGameMode('easy');
-      });
-
-    document
-      .getElementById('medium-difficulty-button')
-      .addEventListener('click', () => {
-        this.selectGameMode('medium');
-      });
-
-    document
-      .getElementById('hard-difficulty-button')
-      .addEventListener('click', () => {
-        this.selectGameMode('hard');
-      });
-  }
-
-  selectGameMode(mode) {
-    gameMode = mode;
-    switch (mode) {
-      case 'easy':
-        baseSpeed = 200;
-        break;
-      case 'medium':
-        baseSpeed = 300;
-        break;
-      case 'hard':
-        baseSpeed = 400;
-        break;
-    }
-    document.getElementById('game-difficulty-modal').style.display = 'none'; // Hide game mode selection modal
-    this.scene.start('GameScene'); // Start the game scene
-  }
-}
-
-class GameScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene' });
+  }
+
+  init(data) {
+    gameDifficulty = data.gameDifficulty;
+    baseSpeed = data.baseSpeed;
   }
 
   preload() {
@@ -93,19 +33,16 @@ class GameScene extends Phaser.Scene {
     this.load.image('bumb', 'assets/bumb.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('superman', 'assets/superman.png');
-    this.load.image('wallet', 'assets/wallet.png'); // Wallet button image
-    this.load.audio('backgroundMusic', 'assets/background-music.mp3'); // Load background music
+    this.load.image('wallet', 'assets/wallet.png');
+    this.load.audio('backgroundMusic', 'assets/background-music.mp3');
   }
 
   create() {
     this.add.image(211, 320, 'atmosphere');
 
-    superman = this.physics.add
-      .image(180, 550, 'superman')
-      .setCollideWorldBounds(true);
-    superman.setDisplaySize(superman.width * (150 / superman.height), 150); // Scale Superman to max height of 150
+    superman = this.physics.add.image(180, 550, 'superman').setCollideWorldBounds(true);
+    superman.setDisplaySize(superman.width * (150 / superman.height), 150);
 
-    // Enable input and drag for Superman
     superman.setInteractive();
     this.input.setDraggable(superman);
 
@@ -113,30 +50,21 @@ class GameScene extends Phaser.Scene {
       gameObject.x = dragX;
     });
 
-    // Create an invisible hitbox for the basket
-    basketHitbox = this.physics.add
-      .image(superman.x, superman.y - 35, null)
-      .setOrigin(0.63, 0.5);
+    basketHitbox = this.physics.add.image(superman.x, superman.y - 35, null).setOrigin(0.63, 0.5);
     basketHitbox.setDisplaySize(superman.displayWidth * 0.9, 20);
-    basketHitbox.body.allowGravity = false; // Disable gravity for the hitbox
-    basketHitbox.setVisible(false); // Hide the hitbox
+    basketHitbox.body.allowGravity = false;
+    basketHitbox.setVisible(false);
 
-    // Create gaming font style for score and lifeline text
-    var textStyle = {
-      fontSize: '16px',
-      fill: '#00ff00',
-      fontFamily: '"Press Start 2P"',
-    }; // Example gaming font and color
+    var textStyle = { fontSize: '16px', fill: '#00ff00', fontFamily: '"Press Start 2P"' };
     scoreText = this.add.text(16, 16, 'Score: 0', textStyle);
-    lifelineText = this.add.text(160, 16, 'Lifeline: 10', textStyle); // Adjusted position to align on the same row
+    lifelineText = this.add.text(160, 16, 'Lifeline: 10', textStyle);
 
-    // Create wallet button
     walletButton = this.add.image(330, 20, 'wallet').setInteractive();
-    walletButton.setDisplaySize(30, 30); // Scale wallet button to fit
+    walletButton.setDisplaySize(30, 30);
 
     walletButton.on('pointerdown', () => {
-      this.scene.pause(); // Pause the game
-      backgroundMusic.pause(); // Pause the background music
+      this.scene.pause();
+      backgroundMusic.pause();
       document.getElementById('wallet-modal').style.display = 'block';
     });
 
@@ -146,17 +74,16 @@ class GameScene extends Phaser.Scene {
       delay: 1000,
       callback: this.increaseDifficulty,
       callbackScope: this,
-      loop: true,
+      loop: true
     });
 
     this.time.addEvent({
       delay: 200,
       callback: this.spawnObject,
       callbackScope: this,
-      loop: true,
+      loop: true
     });
 
-    // Create a div element for the game over modal and hide it initially
     var gameOverModalHtml = `
       <div id="game-over-modal" class="modal">
         <h2>Game Over</h2>
@@ -168,7 +95,6 @@ class GameScene extends Phaser.Scene {
     gameOverModalContainer.innerHTML = gameOverModalHtml;
     document.body.appendChild(gameOverModalContainer);
 
-    // Create a div element for the wallet modal and hide it initially
     var walletModalHtml = `
       <div id="wallet-modal" class="modal">
         <h2>Wallet</h2>
@@ -187,7 +113,6 @@ class GameScene extends Phaser.Scene {
     walletModalContainer.innerHTML = walletModalHtml;
     document.body.appendChild(walletModalContainer);
 
-    // Create a div element for the withdrawal modal and hide it initially
     var withdrawalModalHtml = `
       <div id="withdrawal-modal" class="modal">
         <h2>Withdraw Funds</h2>
@@ -209,12 +134,11 @@ class GameScene extends Phaser.Scene {
     withdrawalModalContainer.innerHTML = withdrawalModalHtml;
     document.body.appendChild(withdrawalModalContainer);
 
-    // Add event listeners for wallet modal buttons
     var closeWalletButton = document.getElementById('close-wallet-button');
     closeWalletButton.addEventListener('click', () => {
       document.getElementById('wallet-modal').style.display = 'none';
-      this.scene.resume(); // Resume the game
-      backgroundMusic.resume(); // Resume the background music
+      this.scene.resume();
+      backgroundMusic.resume();
     });
 
     var depositButton = document.getElementById('deposit-button');
@@ -224,14 +148,11 @@ class GameScene extends Phaser.Scene {
 
     var copyAddressButton = document.getElementById('copy-address-button');
     copyAddressButton.addEventListener('click', () => {
-      navigator.clipboard
-        .writeText(ethAddress)
-        .then(() => {
-          alert('Address copied to clipboard');
-        })
-        .catch((err) => {
-          console.error('Could not copy text: ', err);
-        });
+      navigator.clipboard.writeText(ethAddress).then(() => {
+        alert('Address copied to clipboard');
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
     });
 
     var withdrawButton = document.getElementById('withdraw-button');
@@ -239,9 +160,7 @@ class GameScene extends Phaser.Scene {
       document.getElementById('withdrawal-modal').style.display = 'block';
     });
 
-    var cancelWithdrawalButton = document.getElementById(
-      'cancel-withdrawal-button'
-    );
+    var cancelWithdrawalButton = document.getElementById('cancel-withdrawal-button');
     cancelWithdrawalButton.addEventListener('click', () => {
       document.getElementById('withdrawal-modal').style.display = 'none';
     });
@@ -249,14 +168,11 @@ class GameScene extends Phaser.Scene {
     var withdrawalForm = document.getElementById('withdrawal-form');
     withdrawalForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      var walletAddress = document.getElementById(
-        'withdraw-wallet-address'
-      ).value;
+      var walletAddress = document.getElementById('withdraw-wallet-address').value;
       var amount = parseFloat(document.getElementById('withdraw-amount').value);
       if (walletAddress && amount > 0 && walletBalance >= amount) {
         walletBalance -= amount;
-        document.getElementById('wallet-balance').innerText =
-          'Balance: $' + walletBalance;
+        document.getElementById('wallet-balance').innerText = 'Balance: $' + walletBalance;
         alert(`Sent $${amount} to ${walletAddress}`);
         document.getElementById('withdrawal-modal').style.display = 'none';
       } else {
@@ -264,7 +180,6 @@ class GameScene extends Phaser.Scene {
       }
     });
 
-    // Add event listener to play again button
     var playAgainButton = document.getElementById('play-again-button');
     playAgainButton.addEventListener('click', () => {
       document.getElementById('game-over-modal').style.display = 'none';
@@ -273,7 +188,6 @@ class GameScene extends Phaser.Scene {
 
     modal = document.getElementById('game-over-modal');
 
-    // Add background music
     backgroundMusic = this.sound.add('backgroundMusic', { loop: true });
     backgroundMusic.play();
   }
@@ -287,12 +201,11 @@ class GameScene extends Phaser.Scene {
       superman.setVelocityX(0);
     }
 
-    // Update basket hitbox position to follow Superman
     basketHitbox.setPosition(superman.x + 10, superman.y - 35);
   }
 
   increaseDifficulty() {
-    gameTime += 1; // Increase game time
+    gameTime += 1;
   }
 
   spawnObject() {
@@ -317,16 +230,10 @@ class GameScene extends Phaser.Scene {
       object.isBomb = true;
     }
 
-    object.setDisplaySize(50, object.height * (50 / object.width)); // Scale falling objects to max width of 50
-    object.setVelocityY(baseSpeed + gameTime * 5); // Increase base speed over time
+    object.setDisplaySize(50, object.height * (50 / object.width));
+    object.setVelocityY(baseSpeed + gameTime * 5);
 
-    this.physics.add.overlap(
-      basketHitbox,
-      object,
-      this.catchObject,
-      null,
-      this
-    );
+    this.physics.add.overlap(basketHitbox, object, this.catchObject, null, this);
   }
 
   catchObject(basketHitbox, object) {
@@ -338,7 +245,7 @@ class GameScene extends Phaser.Scene {
         this.physics.pause();
         superman.setTint(0xff0000);
         this.showGameOverModal();
-        backgroundMusic.stop(); // Stop the background music when the game is over
+        backgroundMusic.stop();
       }
     } else {
       score += object.scoreValue;
@@ -358,50 +265,28 @@ class GameScene extends Phaser.Scene {
     score = 0;
     lifeline = 10;
     gameOver = false;
-    gameTime = 0; // Reset game time
+    gameTime = 0;
 
     scoreText.setText('Score: 0');
     lifelineText.setText('Lifeline: 10');
     superman.clearTint();
 
-    this.time.removeAllEvents(); // Remove all existing events
+    this.time.removeAllEvents();
     this.time.addEvent({
       delay: 1000,
       callback: this.increaseDifficulty,
       callbackScope: this,
-      loop: true,
+      loop: true
     });
 
     this.time.addEvent({
       delay: 200,
       callback: this.spawnObject,
       callbackScope: this,
-      loop: true,
+      loop: true
     });
 
-    backgroundMusic.play(); // Restart the background music
+    backgroundMusic.play();
     this.scene.restart();
   }
 }
-
-// Define the configuration object after the scenes
-var config = {
-  type: Phaser.AUTO,
-  width: 360,
-  height: 640,
-  scene: [ModeSelectionScene, GameScene],
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 300 },
-      debug: false,
-    },
-  },
-};
-
-// Initialize the game
-var game = new Phaser.Game(config);

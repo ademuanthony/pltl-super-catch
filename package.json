@@ -1,13 +1,30 @@
 {
-  "name": "super-catch",
+  "name": "my-phaser-game",
   "version": "1.0.0",
+  "description": "Phaser 3 game project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy:dev":  "aws s3 sync ./ s3://dev.ploutoslabs.io"
+    "start": "webpack serve",
+    "build": "webpack --mode production",
+    "deploy:dev": "npm run build && aws s3 sync ./dist s3://dev.ploutoslabs.io --delete"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.9",
+    "@babel/preset-env": "^7.25.0",
+    "babel-loader": "^8.3.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^5.2.6",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.6.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^4.0.0"
+  }
 }
