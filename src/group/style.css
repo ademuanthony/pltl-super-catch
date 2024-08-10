@@ -1,0 +1,137 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header .buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.header .buttons .button {
+  border-radius: 30px;
+}
+
+.button {
+  padding: 10px 20px;
+  background: linear-gradient(180deg, #2555ff 0%, #163399 100%);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 800;
+  line-height: 23.2px;
+}
+
+.card .buttons .leave {
+  background: linear-gradient(180deg, #fe3333 0%, #981f1f 100%);
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.card {
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card h2 {
+  margin: 0 0 10px;
+}
+
+.card .details {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.card .details .details-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#total-players,
+#reward-pool {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.details-label {
+  font-size: 12px;
+}
+
+.card .buttons {
+  display: flex;
+  gap: 10px;
+}
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.user-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.user-list li:last-child {
+  border-bottom: none;
+}
+.user-list img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.user-list .avatar-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.user-list .username {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.user-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
